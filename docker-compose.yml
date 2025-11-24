@@ -5,11 +5,11 @@ services:
     image: postgres:15
     container_name: richasfood-db-pedidos
     ports:
-      - "5434:5432"
+      - "${DB_PORT}:5432" # Mapeia 5434 (Externo) para 5432 (Interno)
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: richasfood-order
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data_pedidos:/var/lib/postgresql/data
     networks:
@@ -19,11 +19,18 @@ services:
     build: .
     container_name: richasfood-app-pedidos
     ports:
-      - "8081:8080"
+      - "${APP_PORT}:8080" # Mapeia 8081 (Externo) para 8080 (Interno)
     depends_on:
       - db
     environment:
+      # CORREÇÃO 1: Definimos a porta interna do Spring como 8080 fixo.
+      # Assim o mapeamento "8081:8080" funciona corretamente.
+      APP_PORT: 8080
+
+      # CORREÇÃO 2: A URL interna do banco DEVE usar a porta 5432.
+      # A porta 5434 é só para o "lado de fora" (Windows).
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/richasfood-order
+
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect

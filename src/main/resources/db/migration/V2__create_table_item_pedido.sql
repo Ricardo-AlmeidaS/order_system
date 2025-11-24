@@ -1,8 +1,8 @@
 CREATE TABLE item_do_pedido (
-  id bigint(20) NOT NULL AUTO_INCREMENT,
+  id bigserial NOT NULL,
   descricao varchar(255) DEFAULT NULL,
-  quantidade int(11) NOT NULL,
-  pedido_id bigint(20) NOT NULL,
+  quantidade integer NOT NULL,
+  pedido_id bigint NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
-)
+);
