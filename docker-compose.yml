@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: richasfood-db-pedidos
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: richasfood-order
+    volumes:
+      - postgres_data_pedidos:/var/lib/postgresql/data
+    networks:
+      - richasfood-network
+
+  app:
+    build: .
+    container_name: richasfood-app-pedidos
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/richasfood-order
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+    networks:
+      - richasfood-network
+
+volumes:
+  postgres_data_pedidos:
+
+networks:
+  richasfood-network:
+    external: true
